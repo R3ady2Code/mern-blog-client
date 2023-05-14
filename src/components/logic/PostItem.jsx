@@ -8,8 +8,8 @@ const PostItem = ({ post }) => {
 				<img
 					src={
 						post.imageUrl
-							? `http://localhost:4444${post.imageUrl}`
-							: 'http://localhost:4444/uploads/non-image.jpg'
+							? `${process.env.REACT_APP_API_URL}${post.imageUrl}`
+							: `${process.env.REACT_APP_API_URL}/uploads/non-image.jpg`
 					}
 					className='card-img-top '
 					alt='...'

@@ -87,7 +87,7 @@ const Post = () => {
 					<div className='post__image-wrapper image-wrapper mb-3'>
 						<img
 							className='img-fluid'
-							src={`http://localhost:4444${postData.imageUrl}`}
+							src={`${process.env.REACT_APP_API_URL}${postData.imageUrl}`}
 							alt='Post'
 						/>
 					</div>
@@ -98,8 +98,8 @@ const Post = () => {
 						<img
 							src={
 								postData.author.avatarUrl
-									? `http://localhost:4444${postData.author.avatarUrl}`
-									: 'http://localhost:4444/uploads/no-avatar.webp'
+									? `${process.env.REACT_APP_API_URL}${postData.author.avatarUrl}`
+									: `${process.env.REACT_APP_API_URL}/uploads/no-avatar.webp`
 							}
 							alt='Avatar author'
 						/>

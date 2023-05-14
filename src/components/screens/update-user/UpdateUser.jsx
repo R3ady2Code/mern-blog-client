@@ -74,7 +74,7 @@ const UpdateUser = () => {
 				<div className='mb-3'>
 					<div className='register__image-wrapper image-wrapper mx-auto'>
 						<img
-							src={`http://localhost:4444${
+							src={`${process.env.REACT_APP_API_URL}${
 								avatarUrl ? avatarUrl : '/uploads/no-avatar.webp'
 							}`}
 							alt='Avatar'

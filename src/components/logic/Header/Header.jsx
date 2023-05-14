@@ -125,8 +125,8 @@ const Header = ({ isLoading }) => {
 									<img
 										src={
 											userData.avatarUrl
-												? `http://localhost:4444${userData.avatarUrl}`
-												: 'http://localhost:4444/uploads/no-avatar.webp'
+												? `${process.env.REACT_APP_API_URL}${userData.avatarUrl}`
+												: `${process.env.REACT_APP_API_URL}/uploads/no-avatar.webp`
 										}
 										alt='Avatar author'
 									/>
