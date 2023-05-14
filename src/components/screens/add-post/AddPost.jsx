@@ -9,8 +9,11 @@ const AddPost = () => {
 
 	const [title, setTitle] = useState('')
 	const [text, setText] = useState('')
-	const [isLoading, setIsLoading] = useState(false)
 	const [imageUrl, setImageUrl] = useState('')
+
+	const [isLoading, setIsLoading] = useState(false)
+
+	const [error, setError] = useState('')
 	const [showErrors, setShowErrors] = useState(false)
 
 	const inputFileRef = useRef(null)
@@ -42,13 +45,16 @@ const AddPost = () => {
 
 			const { data } = await axios.post('/posts', fields)
 
+			console.log(data)
+
 			const id = data._id
 
 			navigate(`/posts/${id}`)
-		} catch (error) {
-			console.warn(error)
+		} catch ({ response }) {
+			const { data } = response
+			console.log(data)
+			setError(data)
 			setShowErrors(true)
-			alert('Ошибка при создании статьи')
 		} finally {
 			setIsLoading(false)
 		}
@@ -80,6 +86,13 @@ const AddPost = () => {
 					placeholder='Текст'
 					rows='6'
 				></textarea>
+			</div>
+
+			<div className='mb-2 d-flex flex-column'>
+				{error &&
+					error.map(({ msg }) => (
+						<span className='text-danger fw-bold text-end'>{msg}</span>
+					))}
 			</div>
 
 			<div className='row gap-2'>

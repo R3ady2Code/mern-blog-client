@@ -30,7 +30,7 @@ function App() {
 	return (
 		<div className='App'>
 			<Header isLoading={isLoading} />
-			<div className='container'>
+			<div className='container-xl'>
 				<Routes>
 					<Route path='/' element={<Home />} />
 					<Route path='/posts/:id' element={<Post />} />

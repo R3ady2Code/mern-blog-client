@@ -14,6 +14,8 @@ const UpdatePost = () => {
 	const [imageUrl, setImageUrl] = useState('')
 
 	const [isLoading, setIsLoading] = useState(false)
+
+	const [error, setError] = useState(null)
 	const [showErrors, setShowErrors] = useState(false)
 
 	const inputFileRef = useRef(null)
@@ -53,11 +55,15 @@ const UpdatePost = () => {
 	const onSubmit = async e => {
 		try {
 			setIsLoading(true)
-			await axios.patch(`/posts/${id}`, { title, text, imageUrl })
+			const response = await axios.patch(`/posts/${id}`, {
+				title,
+				text,
+				imageUrl,
+			})
 			navigate(`/posts/${id}`)
-		} catch (error) {
-			console.warn(error)
-			alert('Не удалось обновить запись')
+		} catch ({ response }) {
+			const { data } = response
+			setError(data)
 		} finally {
 			setIsLoading(false)
 		}
@@ -70,7 +76,7 @@ const UpdatePost = () => {
 	if (!dataIsLoaded) return <h1>loading...</h1>
 
 	return (
-		<form className='mb-3'>
+		<form action='onSubmit' className='mb-3'>
 			<div className='mb-3'>
 				<input
 					value={title}
@@ -93,33 +99,50 @@ const UpdatePost = () => {
 				></textarea>
 			</div>
 
-			<div className='d-flex align-items-start gap-2'>
-				{imageUrl && (
-					<img
-						src={`http://localhost:4444${imageUrl}`}
-						alt='Post'
-						className='mb-3 ms-auto w-25'
+			<div className='mb-2 d-flex flex-column'>
+				{error &&
+					error.map(({ msg }) => (
+						<span className='text-danger fw-bold text-end'>{msg}</span>
+					))}
+			</div>
+
+			<div className='row gap-2'>
+				<div className='col-lg-4 image-wrapper'>
+					{imageUrl && (
+						<img
+							src={`http://localhost:4444${imageUrl}`}
+							alt='Post'
+							className='mb-3 ms-auto'
+						/>
+					)}
+				</div>
+
+				<div className='col col-lg-auto ms-lg-auto'>
+					<input
+						ref={inputFileRef}
+						onChange={handleFileChange}
+						className='form-control ms-auto'
+						type='file'
 					/>
-				)}
-				<input
-					ref={inputFileRef}
-					onChange={handleFileChange}
-					className='form-control ms-auto w-25'
-					type='file'
-				/>
+				</div>
+
 				{imageUrl && (
-					<button onClick={removeFile} className='btn btn-outline-danger'>
-						Удалить файл
-					</button>
+					<div className='col-auto'>
+						<button onClick={removeFile} className='btn btn-outline-danger'>
+							Удалить файл
+						</button>
+					</div>
 				)}
-				<button
-					disabled={isLoading}
-					onClick={onSubmit}
-					className='btn btn-outline-success'
-					type='submit'
-				>
-					Обновить пост
-				</button>
+				<div className='col-12 col-xl-auto'>
+					<button
+						disabled={isLoading}
+						onClick={onSubmit}
+						className='btn btn-outline-success w-100'
+						type='submit'
+					>
+						Обновить пост
+					</button>
+				</div>
 			</div>
 		</form>
 	)

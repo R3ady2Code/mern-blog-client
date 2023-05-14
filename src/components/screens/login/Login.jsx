@@ -9,7 +9,7 @@ const Login = () => {
 	const [isLoading, setIsLoading] = useState(false)
 
 	const isAuth = useSelector(selectIsAuth)
-	const userData = useSelector(state => state.auth)
+
 	const {
 		register,
 		handleSubmit,
@@ -28,13 +28,11 @@ const Login = () => {
 		try {
 			setError('')
 			setIsLoading(true)
-			const response = await dispatch(fetchAuth(values))
-			if (!response.payload) {
-				console.log(userData)
-				return setError('Неверный логин или пароль')
-			}
-			if ('token' in response.payload) {
-				window.localStorage.setItem('token', response.payload.token)
+			const { payload } = await dispatch(fetchAuth(values))
+			if ('token' in payload) {
+				window.localStorage.setItem('token', payload.token)
+			} else {
+				return setError(payload.message)
 			}
 		} catch (error) {
 			console.log(error)
@@ -60,7 +58,7 @@ const Login = () => {
 					{...register('login', { required: true })}
 				/>
 			</div>
-			<div className='mb-5'>
+			<div className={`${!error ? 'mb-5' : 'mb-3'}`}>
 				<label htmlFor='password' className='col-sm-2 col-form-label'>
 					Пароль
 				</label>
@@ -74,7 +72,7 @@ const Login = () => {
 			{error && <span className='text-danger fw-bold'>{error}</span>}
 			<button
 				disabled={isLoading}
-				className='btn btn-primary w-25 d-block mx-auto'
+				className={`btn btn-primary w-25 d-block mx-auto ${error && 'mt-3'}`}
 			>
 				Войти
 			</button>

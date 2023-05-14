@@ -54,7 +54,9 @@ const UpdateUser = () => {
 				fetchAuthUpdate({ login, fullName, avatarUrl, _id: userData._id })
 			)
 			setIsLoading(false)
-			if (!payload) return setError('Не удалось обновить информацию')
+			if (!payload) {
+				setError('Не удалось обновить информацию')
+			}
 			if ('token' in payload) {
 				window.localStorage.setItem('token', payload.token)
 			}

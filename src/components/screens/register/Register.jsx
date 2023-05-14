@@ -45,13 +45,35 @@ const Register = () => {
 	}
 
 	const onSubmit = async values => {
-		setError('')
-		setIsLoading(true)
-		const { payload } = await dispatch(fetchRegister({ ...values, avatarUrl }))
-		setIsLoading(false)
-		if (!payload) return setError('Не удалось зарегистрироваться')
-		if ('token' in payload) {
-			window.localStorage.setItem('token', payload.token)
+		try {
+			setError('')
+			setIsLoading(true)
+			const { payload } = await dispatch(
+				fetchRegister({ ...values, avatarUrl })
+			)
+			console.log(payload)
+			if ('token' in payload) {
+				window.localStorage.setItem('token', payload.token)
+			}
+			if (payload.message) {
+				return setError(payload.message)
+			}
+			if (Array.isArray(payload)) {
+				return setError(payload)
+			}
+		} catch (error) {
+			console.warn(error)
+		} finally {
+			setIsLoading(false)
+		}
+	}
+	const isInvalidInput = path => {
+		let result = false
+		if (Array.isArray(error)) {
+			error.forEach(error => {
+				if (error.path === path) result = true
+			})
+			return result
 		}
 	}
 
@@ -93,7 +115,9 @@ const Register = () => {
 				<input
 					{...register('fullName', { required: true })}
 					type='text'
-					className={`form-control ${errors.fullName && 'is-invalid'}`}
+					className={`form-control ${
+						errors.fullName || (isInvalidInput('fullName') && 'is-invalid')
+					}`}
 					id='fullName'
 					placeholder='Иван Иванов'
 				/>
@@ -105,7 +129,9 @@ const Register = () => {
 				<input
 					{...register('login', { required: true })}
 					type='text'
-					className={`form-control ${errors.login && 'is-invalid'}`}
+					className={`form-control ${
+						errors.login || (isInvalidInput('login') && 'is-invalid')
+					}`}
 					id='login'
 					placeholder='ivanivanov'
 				/>
@@ -117,11 +143,21 @@ const Register = () => {
 				<input
 					{...register('password', { required: true })}
 					type='password'
-					className={`form-control ${errors.password && 'is-invalid'}`}
+					className={`form-control ${
+						errors.password || (isInvalidInput('password') && 'is-invalid')
+					}`}
 					id='password'
 				/>
 			</div>
-			{error && <span className='text-danger fw-bold'>{error}</span>}
+			{error && (
+				<div className='text-danger fw-bold d-flex flex-column'>
+					{Array.isArray(error) ? (
+						error.map(({ msg }) => <span>{msg}</span>)
+					) : (
+						<span>{error}</span>
+					)}
+				</div>
+			)}
 			<button disabled={isLoading} className='btn btn-success d-block ms-auto'>
 				Зарегистрироваться
 			</button>
